@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Calculator.cs" />
     <Compile Include="Classes\Functions\BaseFunction.cs" />
     <Compile Include="Classes\Functions\Cos.cs" />
     <Compile Include="Classes\Functions\Sin.cs" />

@@ -1,113 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using calculator.Classes;
+using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace calculator
 {
     public partial class Form1 : Form
     {
-        private bool clearOutput;
-        private bool separatorActive;
-        private bool functionActive;
-        private bool operatorActive;
+        private bool flClearOutput;
+        private bool vlSeparatorActive;
+        private bool flFunctionActive;
+        private bool flOperatorActive;
+        private bool flClearInput;
+        private bool degree;
+
         public Form1()
         {
             InitializeComponent();
             tbInput.ResetText();
             tbOutput.ResetText();
-            clearOutput = false;
-            separatorActive = false;
-            functionActive = false;
-            operatorActive = false;
+            flClearOutput = false;
+            flClearInput = false;
+            vlSeparatorActive = false;
+            flFunctionActive = false;
+            flOperatorActive = false;
+            degree = false;
         }
-
-        private void btn0_Click(object sender, EventArgs e)
-        {
-            AddOutputText("0");
-        }
-
-        private void btn1_Click(object sender, EventArgs e)
-        {
-            AddOutputText("1");
-        }
-
-        private void btn2_Click(object sender, EventArgs e)
-        {
-            AddOutputText("2");
-        }
-
-        private void btn3_Click(object sender, EventArgs e)
-        {
-            AddOutputText("3");
-        }
-
-        private void btn4_Click(object sender, EventArgs e)
-        {
-            AddOutputText("4");
-        }
-
-        private void btn5_Click(object sender, EventArgs e)
-        {
-            AddOutputText("5");
-        }
-
-        private void btn6_Click(object sender, EventArgs e)
-        {
-            AddOutputText("6");
-        }
-
-        private void btn7_Click(object sender, EventArgs e)
-        {
-            AddOutputText("7");
-        }
-
-        private void btn8_Click(object sender, EventArgs e)
-        {
-            AddOutputText("8");
-        }
-
-        private void btn9_Click(object sender, EventArgs e)
-        {
-            AddOutputText("9");
-        }
-
         private void btnSeparator_Click(object sender, EventArgs e)
         {
-            if (!separatorActive)
+            if (!vlSeparatorActive)
             {
                 AddOutputText(",");
             }
-            separatorActive = true;
-        }
-
-        private void btnAdd_Click(object sender, EventArgs e)
-        {
-            AddOperatorText("+");
-        }
-
-
-        private void btnSub_Click(object sender, EventArgs e)
-        {
-            AddOperatorText("-");
-
-        }
-
-        private void btnMul_Click(object sender, EventArgs e)
-        {
-            AddOperatorText("x");
-        }
-
-        private void btnDiv_Click(object sender, EventArgs e)
-        {
-            AddOperatorText("÷");
+            vlSeparatorActive = true;
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -115,8 +40,10 @@ namespace calculator
             switch (e.KeyCode)
             {
                 case Keys.Clear:
+                    btnClear.PerformClick();
                     break;
                 case Keys.Enter:
+                    btnEqual.PerformClick();
                     break;
                 case Keys.D0:
                 case Keys.NumPad0:
@@ -181,7 +108,7 @@ namespace calculator
 
         private void btnSign_Click(object sender, EventArgs e)
         {
-            if (tbOutput.Text.First().Equals('-'))
+            if (tbOutput.Text.StartsWith("-"))
             {
                 tbOutput.Text = tbOutput.Text.Substring(1);
             }
@@ -191,46 +118,29 @@ namespace calculator
             }
         }
 
-        private void btnSin_Click(object sender, EventArgs e)
-        {
-            AddFunctionTest("sin");
-        }
-        private void btnCos_Click(object sender, EventArgs e)
-        {
-            AddFunctionTest("cos");
-        }
-
 
         #region  Helpers
         private void AddFunctionTest(string function)
         {
-            if (operatorActive)
+            flFunctionActive = true;
+            if (flOperatorActive)
             {
                 tbInput.Text += $"{function}({tbOutput.Text})";
                 tbOutput.ResetText();
                 tbOutput.Text = "0";
-                operatorActive = false;
+                flOperatorActive = false;
             }
             else
             {
                 tbInput.Text = $"{function}({tbOutput.Text})";
-                switch (function)
-                {
-                    case "sin":
-                        tbOutput.Text = Math.Sin(double.Parse(tbOutput.Text)).ToString(); break;
-                    case "cos":
-                        tbOutput.Text = Math.Cos(double.Parse(tbOutput.Text)).ToString(); break;
-                    default:
-                        break;
-                }
-                clearOutput = true;
+                btnEqual.PerformClick();
+                flClearOutput = true;
             }
-            functionActive = true;
 
         }
         private void AddOperatorText(string operatorText)
         {
-            if (functionActive)
+            if (flFunctionActive)
             {
                 tbInput.Text += $" {operatorText} ";
             }
@@ -238,16 +148,21 @@ namespace calculator
             {
                 tbInput.Text += $"{tbOutput.Text} {operatorText} ";
             }
-            operatorActive = true;
-            separatorActive = false;
-            functionActive = false;
-            clearOutput = true;
+            flOperatorActive = true;
+            vlSeparatorActive = false;
+            flFunctionActive = false;
+            flClearOutput = true;
+            flClearInput = false;
         }
         private void AddOutputText(string text)
         {
-            if (clearOutput)
+            if (flClearOutput)
             {
                 tbOutput.ResetText();
+            }
+            if (flClearInput)
+            {
+                tbInput.ResetText();
             }
             tbOutput.Text += text;
             if (text != "0" && tbOutput.Text.StartsWith("0"))
@@ -258,7 +173,8 @@ namespace calculator
             {
                 tbOutput.Text = "0";
             }
-            clearOutput = false;
+            flClearOutput = false;
+            flClearInput = false;
         }
         #endregion
 
@@ -268,10 +184,10 @@ namespace calculator
         {
             tbOutput.ResetText();
             tbInput.ResetText();
-            clearOutput = false;
-            separatorActive = false;
-            functionActive = false;
-            operatorActive = false;
+            flClearOutput = false;
+            vlSeparatorActive = false;
+            flFunctionActive = false;
+            flOperatorActive = false;
         }
 
         private void btnBack_Click(object sender, EventArgs e)
@@ -280,7 +196,7 @@ namespace calculator
             {
                 if (tbOutput.Text.Last().Equals(','))
                 {
-                    separatorActive = false;
+                    vlSeparatorActive = false;
                 }
                 tbOutput.Text = tbOutput.Text.Substring(0, tbOutput.Text.Length - 1);
                 if (string.IsNullOrEmpty(tbOutput.Text))
@@ -292,19 +208,22 @@ namespace calculator
 
         private void btnBeginParanthesis_Click(object sender, EventArgs e)
         {
-            if(operatorActive)
+            if (flOperatorActive)
             {
-                tbInput.Text += "(";
+                tbInput.Text += tbOutput.Text + " x (";
+                flClearOutput = true;
             }
             else
             {
-                if(tbInput.Text.Length > 0)
+                if (tbOutput.Text.Length > 0)
                 {
-                    tbInput.Text += " x (";
+                    tbInput.Text += tbOutput.Text + " x (";
+                    flClearOutput = true;
                 }
                 else
                 {
                     tbInput.Text += "(";
+                    flClearOutput = true;
                 }
             }
         }
@@ -313,7 +232,76 @@ namespace calculator
         {
             tbInput.Text += $"{tbOutput.Text})";
             tbOutput.Text = "0";
-            functionActive = true;
+            flFunctionActive = true;
+        }
+
+        private void btnEqual_Click(object sender, EventArgs e)
+        {
+            if (!flFunctionActive)
+            {
+                tbInput.Text += tbOutput.Text;
+            }
+            Calculator calculator = new Calculator();
+            if (calculator.AddOperators(calculator.AddFunctions(tbInput.Text)))
+            {
+                tbOutput.Text = calculator.Calculate(tbInput.Text).ToString();
+            }
+            else
+            {
+                tbOutput.Text = calculator.GetFunctionResult(tbInput.Text).ToString();
+            }
+            flClearOutput = true;
+            flClearInput = true; 
+            flFunctionActive = false;
+            flOperatorActive = false;
+        }
+
+        private void btn_MouseUp(object sender, MouseEventArgs e)
+        {
+            btnFocus.Focus();
+        }
+
+        private void btnTrig_Click(object sender, EventArgs e)
+        {
+            if (btnTrig.Text.Equals("RAD"))
+            {
+                btnTrig.Text = "DEG";
+                degree = true;
+                if(tbOutput.Text.Length > 0)
+                {
+                    double val = double.Parse(tbOutput.Text) * (180 / Math.PI);
+                    tbOutput.Text = val.ToString();
+                    flClearOutput = true;
+                    
+                }
+            }
+            else
+            {
+                btnTrig.Text = "RAD";
+                degree = false;
+                if (tbOutput.Text.Length > 0)
+                {
+                    double val = double.Parse(tbOutput.Text) / (180 / Math.PI);
+                    tbOutput.Text = val.ToString();
+                    flClearOutput = true;
+                }
+
+            }
+        }
+
+        private void BtnNrClick(object sender, EventArgs e)
+        {
+            AddOutputText((sender as Button).Text);
+        }
+
+        private void BtnOperatorClick(object sender, EventArgs e)
+        {
+            AddOperatorText((sender as Button).Text);
+        }
+
+        private void btnFunctionClick(object sender, EventArgs e)
+        {
+            AddFunctionTest((sender as Button).Text);
         }
     }
 }
