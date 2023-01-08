@@ -19,6 +19,7 @@ namespace calculator
             InitializeComponent();
             tbInput.ResetText();
             tbOutput.ResetText();
+            tbHistory.ResetText();
             flClearOutput = false;
             flClearInput = false;
             vlSeparatorActive = false;
@@ -39,13 +40,22 @@ namespace calculator
         {
             switch (e.KeyCode)
             {
-                case Keys.Clear:
-                    btnClear.PerformClick();
+                case Keys.Back:
+                    btnBack.PerformClick();
                     break;
                 case Keys.Enter:
                     btnEqual.PerformClick();
                     break;
                 case Keys.D0:
+                    if (Keys.Shift == Control.ModifierKeys)
+                    {
+                        btnEndParanthesis.PerformClick();
+                    }
+                    else
+                    {
+                        btn0.PerformClick();
+                    }
+                    break;
                 case Keys.NumPad0:
                     btn0.PerformClick();
                     break;
@@ -82,6 +92,15 @@ namespace calculator
                     btn8.PerformClick();
                     break;
                 case Keys.D9:
+                    if (Keys.Shift == Control.ModifierKeys)
+                    {
+                        btnBeginParanthesis.PerformClick();
+                    }
+                    else
+                    {
+                        btn9.PerformClick();
+                    }
+                    break;
                 case Keys.NumPad9:
                     btn9.PerformClick();
                     break;
@@ -120,7 +139,7 @@ namespace calculator
 
 
         #region  Helpers
-        private void AddFunctionTest(string function)
+        private void AddFunctionText(string function)
         {
             flFunctionActive = true;
             if (flOperatorActive)
@@ -136,8 +155,8 @@ namespace calculator
                 btnEqual.PerformClick();
                 flClearOutput = true;
             }
-
         }
+
         private void AddOperatorText(string operatorText)
         {
             if (flFunctionActive)
@@ -210,7 +229,7 @@ namespace calculator
         {
             if (flOperatorActive)
             {
-                tbInput.Text += tbOutput.Text + " x (";
+                tbInput.Text += "(";
                 flClearOutput = true;
             }
             else
@@ -230,8 +249,15 @@ namespace calculator
 
         private void btnEndParanthesis_Click(object sender, EventArgs e)
         {
-            tbInput.Text += $"{tbOutput.Text})";
-            tbOutput.Text = "0";
+            if (tbOutput.Text != "0")
+            {
+                tbInput.Text += $"{tbOutput.Text})";
+                tbOutput.Text = "0";
+            }
+            else
+            {
+                tbInput.Text += ")";
+            }
             flFunctionActive = true;
         }
 
@@ -241,17 +267,12 @@ namespace calculator
             {
                 tbInput.Text += tbOutput.Text;
             }
-            Calculator calculator = new Calculator();
-            if (calculator.AddOperators(calculator.AddFunctions(tbInput.Text)))
-            {
-                tbOutput.Text = calculator.Calculate(tbInput.Text).ToString();
-            }
-            else
-            {
-                tbOutput.Text = calculator.GetFunctionResult(tbInput.Text).ToString();
-            }
+            string txtInput = "(" + tbInput.Text + ")";
+            Calculator calculator = new Calculator(degree);
+            tbOutput.Text = calculator.SolveParanthesis(txtInput);
+            tbHistory.Text += tbInput.Text + "=" + Environment.NewLine + tbOutput.Text + Environment.NewLine;
             flClearOutput = true;
-            flClearInput = true; 
+            flClearInput = true;
             flFunctionActive = false;
             flOperatorActive = false;
         }
@@ -267,12 +288,12 @@ namespace calculator
             {
                 btnTrig.Text = "DEG";
                 degree = true;
-                if(tbOutput.Text.Length > 0)
+                if (tbOutput.Text.Length > 0)
                 {
                     double val = double.Parse(tbOutput.Text) * (180 / Math.PI);
                     tbOutput.Text = val.ToString();
                     flClearOutput = true;
-                    
+
                 }
             }
             else
@@ -301,7 +322,7 @@ namespace calculator
 
         private void btnFunctionClick(object sender, EventArgs e)
         {
-            AddFunctionTest((sender as Button).Text);
+            AddFunctionText((sender as Button).Text);
         }
     }
 }

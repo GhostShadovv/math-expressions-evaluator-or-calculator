@@ -3,8 +3,14 @@
     internal class BaseFunction
     {
         public string Input { get; set; }
-        public virtual string GetInputDegree() => "BaseFunctionDegree";
+        public virtual string GetInputDegree()
+        {
+            return "BaseFunctionDegree";
+        }
 
-        public virtual string GetInputRadian() => "BaseFunctionRadian";
+        public virtual string GetInputRadian()
+        {
+            return "BaseFunctionRadian";
+        }
     }
 }

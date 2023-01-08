@@ -7,6 +7,9 @@
         {
             priority = 2;
         }
-        public override double Calculate() => Left / Right;
+        public override double Calculate()
+        {
+            return Left / Right;
+        }
     }
 }

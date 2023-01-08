@@ -7,6 +7,9 @@
         public double Right { get; set; }
         public int Position { get; set; }
 
-        public virtual double Calculate() => 0;
+        public virtual double Calculate()
+        {
+            return 0;
+        }
     }
 }
